@@ -82,8 +82,76 @@ public class Main
             }
         }
         //if i am here that means we have found the Node
-        //Case 1: if node to be deleted has no childred
+        //Case 1: if node to be deleted has no children
+        if(current.left==null && current.right==null){
+            if(current==root){
+                root=null;
+            }
+            if(isLeftChild==true){
+                parent.left = null;
+            }
+            else{
+                parent.right = null;
+            }
+        }
+        //Case 2: if node to be deleted has only one child
+        else if(current.right==null){
+            if(current==root){
+                root = current.left;
+            }
+            else if(isLeftChild){
+                parent.left = current.left;
+            }
+            else{
+                parent.right = current.left;
+            }
+            
+        }
+        else if(current.left==null){
+            if(current==root){
+                root=current.right;
+            }
+            else if(isLeftChild){
+                parent.left = current.right;
+            }
+            else{
+                parent.right = current.right;
+            }
+        }
+        //Now we have found the minimum element in the right sub Tree
+        //Case 3:  Where we have two child
+        else if(current.left!=null && current.right!=null){
+            Node successor = getSuccessor(current);
+            if(current==root){
+                root = successor;
+            }
+            else if(isLeftChild){
+                parent.left = successor;
+            }
+            else{
+                parent.right = successor;
+            }
+            successor.left = current.left;
+        }
+        return true;
         
+    }
+    public Node getSuccessor(Node deleteNode){
+        Node successor = null;
+        Node successorParent = null;
+        Node current = deleteNode.right;
+        while(current!=null){
+            successorParent = successor;
+            successor = current;
+            current = current.left;
+        }
+        //check if successor has the right child, it cannot have left child for sure
+        //if it does have the right child, add it to the left of successorParent
+        if(successor!=deleteNode.right){
+            successorParent.left = successor.right;
+            successor.right = deleteNode.right;
+        }
+        return successor;
     }
 	public static void main(String[] args) {
 		Main b = new Main();
@@ -100,8 +168,13 @@ public class Main
 		b.insert(20);
 		b.insert(25);
 		System.out.println("original Tree: ");
-		b.display(b.root);
+		b.display(root);
 		System.out.println("\nCheck whether Node with value 4 exists: "+b.find(4));
-		
+		System.out.println("\nDelete Node with no childred (2): "+b.delete(2));
+		b.display(root);
+		System.out.println("\nDelete Node with one child (4): "+b.delete(4));
+		b.display(root);
+		System.out.println("\nDelete Node with Two childred (10): "+b.delete(10));
+		b.display(root);
 	}
 }
